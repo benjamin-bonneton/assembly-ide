@@ -1,0 +1,62 @@
+/* Navigation Bar */
+main nav {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  color: var(--color-text);
+  font-size: 14px;
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-background-panels);
+}
+
+main nav .menu {
+  position: relative;
+}
+
+main nav .menu .title {
+  cursor: pointer;
+  user-select: none;
+  padding: 0 10px;
+  border-radius: 0.25rem;
+}
+main nav .menu .title:hover {
+  background-color: var(--color-background-card);
+}
+
+/* Dropdown Options */
+main nav .menu .options {
+  display: none;
+}
+main nav .menu:hover .options {
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 20px;
+  left: 0;
+  background-color: var(--color-background-panels);
+  border: 1px solid var(--color-border);
+  border-radius: 0.25rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+}
+
+main nav .menu:hover .options .item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 5px 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.1s ease;
+}
+main nav .menu:hover .options .item:hover {
+  background-color: var(--color-background-card);
+}
+
+main nav .menu .options .item img {
+  width: 16px;
+  height: 16px;
+}

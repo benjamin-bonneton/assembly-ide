@@ -1,0 +1,7 @@
+LDI r1 254
+
+LOD r1 r2
+
+LOD r1 r3
+
+HLT
