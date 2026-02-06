@@ -1,13 +1,13 @@
 // React
-import { useRef, useImperativeHandle } from "react";
+import { useRef, useImperativeHandle } from 'react';
 
 // Hooks
-import useEditorLines from "@hooks/editor/useEditorLines";
-import useEditorColors from "@hooks/editor/useEditorColors";
-import useEditorHistory from "@hooks/editor/useEditorHistory";
-import useEditorIndentation from "@hooks/editor/useEditorIndentation";
-import useEditorOverlaySync from "@hooks/editor/useEditorOverlaySync";
-import useEditorAutoComplete from "@hooks/editor/useEditorAutoComplete";
+import useEditorLines from '@hooks/editor/useEditorLines';
+import useEditorColors from '@hooks/editor/useEditorColors';
+import useEditorHistory from '@hooks/editor/useEditorHistory';
+import useEditorIndentation from '@hooks/editor/useEditorIndentation';
+import useEditorOverlaySync from '@hooks/editor/useEditorOverlaySync';
+import useEditorAutoComplete from '@hooks/editor/useEditorAutoComplete';
 
 export interface EditorHandle {
   undo: () => void;
@@ -24,12 +24,26 @@ interface EditorProps {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   executionLine: number;
+  onExecute?: () => void;
+  onStep?: () => void;
 }
 
-function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
+function Editor({
+  editorRef,
+  value,
+  setValue,
+  executionLine,
+  onExecute,
+  onStep,
+}: EditorProps) {
   // Refs
-  const { textareaRef, lineNumbersRef, lineNumbers, currentLine } =
-    useEditorLines(value);
+  const {
+    textareaRef,
+    lineNumbersRef,
+    lineNumbers,
+    currentLine,
+    executionLineMapping,
+  } = useEditorLines(value);
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
   // Hooks
@@ -39,6 +53,7 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
   useEditorOverlaySync(textareaRef, overlayRef, value);
   const {
     autoComplete,
+    dropdownRef,
     hideAutoComplete,
     selectNext,
     selectPrevious,
@@ -54,17 +69,17 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
 
     // Handle autocomplete navigation
     if (autoComplete.isVisible) {
-      if (e.key === "ArrowDown") {
+      if (e.key === 'ArrowDown') {
         e.preventDefault();
         selectNext();
         return;
       }
-      if (e.key === "ArrowUp") {
+      if (e.key === 'ArrowUp') {
         e.preventDefault();
         selectPrevious();
         return;
       }
-      if (e.key === "Enter" || e.key === "Tab") {
+      if (e.key === 'Enter' || e.key === 'Tab') {
         e.preventDefault();
         const result = confirmSelection(textarea);
         if (result) {
@@ -80,7 +95,7 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
         }
         return;
       }
-      if (e.key === "Escape") {
+      if (e.key === 'Escape') {
         e.preventDefault();
         hideAutoComplete();
         return;
@@ -88,7 +103,7 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
     }
 
     // Handle Ctrl+Z (Undo)
-    if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
       e.preventDefault();
       undo();
       return;
@@ -97,15 +112,71 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
     // Handle Ctrl+Shift+Z or Ctrl+Y (Redo)
     if (
       (e.ctrlKey || e.metaKey) &&
-      ((e.key === "z" && e.shiftKey) || e.key === "y")
+      ((e.key === 'z' && e.shiftKey) || e.key === 'y')
     ) {
       e.preventDefault();
       redo();
       return;
     }
 
+    // Handle Ctrl+S (Save)
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+      e.preventDefault();
+      if (
+        editorRef &&
+        typeof editorRef === 'object' &&
+        'current' in editorRef &&
+        editorRef.current?.saveAs
+      ) {
+        editorRef.current.saveAs();
+      }
+      return;
+    }
+
+    // Handle Ctrl+O (Open)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'o') {
+      e.preventDefault();
+      if (
+        editorRef &&
+        typeof editorRef === 'object' &&
+        'current' in editorRef &&
+        editorRef.current?.openFile
+      ) {
+        editorRef.current.openFile();
+      }
+      return;
+    }
+
+    // Handle Ctrl+W (Close/New)
+    if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+      e.preventDefault();
+      if (
+        editorRef &&
+        typeof editorRef === 'object' &&
+        'current' in editorRef &&
+        editorRef.current?.newFile
+      ) {
+        editorRef.current.newFile();
+      }
+      return;
+    }
+
+    // Handle Ctrl+Shift+Enter (Next Step)
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === 'Enter') {
+      e.preventDefault();
+      onStep?.();
+      return;
+    }
+
+    // Handle Ctrl+Enter (Execute)
+    else if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+      e.preventDefault();
+      onExecute?.();
+      return;
+    }
+
     // Handle Tab indentation (when autocomplete is not visible)
-    if (e.key === "Tab") {
+    if (e.key === 'Tab') {
       e.preventDefault();
 
       const start = textarea.selectionStart;
@@ -155,14 +226,14 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
     newFile: () => {
       const textarea = textareaRef.current;
       if (textarea) {
-        addToHistory("", 0, 0);
+        addToHistory('', 0, 0);
       }
-      setValue("");
+      setValue('');
     },
     openFile: () => {
-      const input = document.createElement("input");
-      input.type = "file";
-      input.accept = ".as";
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = '.as';
       input.onchange = async (ev: Event) => {
         const target = ev.target as HTMLInputElement;
         const file = target.files?.[0];
@@ -177,18 +248,21 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
       input.click();
     },
     saveAs: () => {
-      const filename = window.prompt("Enter filename to save as:", "code.as");
+      const filename = window.prompt(
+        'Enter filename to save as:',
+        'code-' + String(new Date().getTime()) + '.as'
+      );
 
       if (filename === null) return;
 
-      const blob = new Blob([value], { type: "text/plain;charset=utf-8" });
+      const blob = new Blob([value], { type: 'text/plain;charset=utf-8' });
       const url = URL.createObjectURL(blob);
 
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
-      a.download = filename || "code.as";
+      a.download = filename || 'code-' + String(new Date().getTime()) + '.as';
       document.body.appendChild(a);
-      
+
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
@@ -208,41 +282,54 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
           <div
             // eslint-disable-next-line react-x/no-array-index-key
             key={i}
-            style={i + 1 === currentLine ? { color: "var(--color-text)" } : {}}
+            style={i + 1 === currentLine ? { color: 'var(--color-text)' } : {}}
+            className="cursor-default select-none"
           >
-            <span style={{ color: "var(--color-primary)", fontWeight: "bold" }}>
-              {executionLine === i && "•"}
+            <span style={{ color: 'var(--color-primary)', fontWeight: 'bold' }}>
+              {executionLineMapping[i] === executionLine &&
+                executionLineMapping[i] !== -1 &&
+                '•'}
             </span>
-            <p>{num === "" ? "\u00A0" : num}</p>
+            <p>{num === '' ? '\u00A0' : num}</p>
           </div>
         ))}
       </div>
 
-      <div style={{ position: "relative", flexGrow: 1 }}>
+      <div style={{ position: 'relative', flexGrow: 1 }}>
         {/* Overlay for syntax highlighting */}
         <div
           ref={overlayRef}
           id="editor_overlay"
           style={{
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            width: "100%",
-            height: "100%",
-            pointerEvents: "none",
-            background: "transparent",
-            whiteSpace: "pre",
-            overflow: "auto",
-            boxSizing: "border-box",
+            width: '100%',
+            height: '100%',
+            pointerEvents: 'none',
+            background: 'transparent',
+            overflow: 'hidden',
+            boxSizing: 'border-box',
             zIndex: 1,
-            color: "white",
+            color: 'white',
           }}
           aria-hidden="true"
-          // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
-          dangerouslySetInnerHTML={{ __html: colorizedHtml }}
-        />
+        >
+          <div
+            className="editor-overlay-content"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 'auto',
+              whiteSpace: 'pre',
+            }}
+            // eslint-disable-next-line react-dom/no-dangerously-set-innerhtml
+            dangerouslySetInnerHTML={{ __html: colorizedHtml }}
+          />
+        </div>
 
         {/* Textarea */}
         <textarea
@@ -254,21 +341,21 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
           onKeyDown={handleKeyDown}
           autoFocus
           style={{
-            background: "transparent",
-            position: "absolute",
+            position: 'absolute',
             top: 0,
             left: 0,
             right: 0,
             bottom: 0,
-            width: "100%",
-            height: "100%",
+            width: '100%',
+            height: '100%',
+            background: 'transparent',
+            whiteSpace: 'pre',
+            overflow: 'auto',
             zIndex: 2,
-            color: "transparent",
-            caretColor: "white",
-            textShadow: "none",
-            resize: "none",
-            whiteSpace: "pre",
-            overflow: "auto",
+            color: 'transparent',
+            caretColor: 'white',
+            textShadow: 'none',
+            resize: 'none',
           }}
           spellCheck={false}
         />
@@ -276,9 +363,10 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
         {/* Autocomplete Dropdown */}
         {autoComplete.isVisible && autoComplete.suggestions.length > 0 && (
           <div
+            ref={dropdownRef}
             className="autocomplete-dropdown"
             style={{
-              position: "absolute",
+              position: 'absolute',
               top: `${String(autoComplete.position.top)}px`,
               left: `${String(autoComplete.position.left)}px`,
               zIndex: 1000,
@@ -287,8 +375,9 @@ function Editor({ editorRef, value, setValue, executionLine }: EditorProps) {
             {autoComplete.suggestions.map((suggestion, index) => (
               <div
                 key={suggestion}
+                data-index={index}
                 className={`autocomplete-item ${
-                  index === autoComplete.selectedIndex ? "selected" : ""
+                  index === autoComplete.selectedIndex ? 'selected' : ''
                 }`}
                 onClick={() => {
                   const textarea = textareaRef.current;

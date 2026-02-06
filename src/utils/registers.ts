@@ -1,8 +1,8 @@
 // Env
-import { NB_REGISTERS } from "../vite-env.d";
+import { NB_REGISTERS } from '../vite-env.d';
 
 // Types
-import type { RegistersType } from "src/types/assembleur";
+import type { RegistersType } from 'src/types/assembleur';
 
 // Check
 export const isRegister = (instructionItem: string) => {

@@ -1,14 +1,14 @@
 // Env
-import { NB_REGISTERS, NB_DATA_MEMORY } from "../../vite-env.d";
+import { NB_REGISTERS, NB_DATA_MEMORY } from '../../vite-env.d';
 
 // React
-import { useState, useMemo } from "react";
+import { useState, useMemo } from 'react';
 
 // Context
-import { AssembleurContext } from "@providers/assembleur/useAssembleur";
+import { AssembleurContext } from '@providers/assembleur/useAssembleur';
 
 // Types
-import type { AssembleurType } from "../../types/assembleur";
+import type { AssembleurType } from '../../types/assembleur';
 
 export function AssembleurProvider({
   children,
@@ -21,14 +21,14 @@ export function AssembleurProvider({
     memories: Array.from({ length: NB_DATA_MEMORY }, () => 0),
     screenNumber: 0,
     screenNumberIsSigned: true,
-    screenText: Array.from({ length: 10 }, () => ""),
-    screenTextBuffer: Array.from({ length: 10 }, () => ""),
+    screenText: Array.from({ length: 10 }, () => ''),
+    screenTextBuffer: Array.from({ length: 10 }, () => ''),
     screenPixelX: 0,
     screenPixelY: 0,
     screenPixelsBuffer: Array.from({ length: 1024 }, () => false),
     screenPixels: Array.from({ length: 1024 }, () => false),
     programCounter: 0,
-    code: "",
+    code: '',
     flags: {
       carry: false,
       zero: false,
@@ -38,7 +38,7 @@ export function AssembleurProvider({
     error: null,
     isRunning: false,
     randomCache: new Map(),
-    codeHash: "",
+    codeHash: '',
     controllerInput: 0,
   });
 

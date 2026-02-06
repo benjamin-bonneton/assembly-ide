@@ -1,8 +1,8 @@
 // React
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 // Provider
-import { useAssembleur } from "@providers/assembleur/useAssembleur";
+import { useAssembleur } from '@providers/assembleur/useAssembleur';
 
 // Key mapping
 const KEY_VALUES = {
@@ -94,13 +94,13 @@ const useGamepadController = () => {
     };
 
     // Add event listeners
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
 
     // Cleanup
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("keyup", handleKeyUp);
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
     };
   }, [setAssembleur]);
 

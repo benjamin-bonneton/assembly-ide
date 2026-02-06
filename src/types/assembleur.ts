@@ -31,12 +31,12 @@ export interface AssembleurType {
 
 // Argument types
 export type ArgumentType =
-  | "register"
-  | "immediate"
-  | "label"
-  | "alias"
-  | "condition"
-  | "unknown";
+  | 'register'
+  | 'immediate'
+  | 'label'
+  | 'alias'
+  | 'condition'
+  | 'unknown';
 
 // Data structures
 export type RegistersType = number[];

@@ -1,8 +1,8 @@
 // Env
-import { NB_DATA_MEMORY } from "../vite-env.d";
+import { NB_DATA_MEMORY } from '../vite-env.d';
 
 // Types
-import type { MemoriesType } from "src/types/assembleur";
+import type { MemoriesType } from 'src/types/assembleur';
 
 // Normalize memory value with modulo 256
 const normalizeValue = (value: number): number => {

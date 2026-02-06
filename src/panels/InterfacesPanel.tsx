@@ -1,15 +1,15 @@
 // Env
-import { VERSION } from "../vite-env.d";
+import { VERSION } from '../vite-env.d';
 
 // Providers
-import { useAssembleur } from "@providers/assembleur/useAssembleur";
+import { useAssembleur } from '@providers/assembleur/useAssembleur';
 
 // Styles
-import "@styles/InterfacesPanel.css";
+import '@styles/InterfacesPanel.css';
 
 // Icons
-import collapseIcon from "@images/collapse.svg";
-import expandIcon from "@images/expand.svg";
+import collapseIcon from '@images/collapse.svg';
+import expandIcon from '@images/expand.svg';
 
 function InterfacesPanel({
   isVisible,
@@ -61,8 +61,8 @@ function InterfacesPanel({
           <div className="content">
             <p>
               {assembleur.screenText
-                .map((item) => (item === "" ? "_" : item))
-                .join(" ")}
+                .map((item) => (item === '' ? '_' : item))
+                .join(' ')}
             </p>
           </div>
         </div>
@@ -81,7 +81,7 @@ function InterfacesPanel({
               <div
                 // eslint-disable-next-line react-x/no-array-index-key
                 key={i}
-                className={pixel ? "pixel-on" : "pixel-off"}
+                className={pixel ? 'pixel-on' : 'pixel-off'}
               ></div>
             ))}
           </div>
@@ -93,7 +93,7 @@ function InterfacesPanel({
             <div
               id="key-left"
               className={
-                (assembleur.controllerInput & 1) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 1) !== 0 ? 'key-pressed' : ''
               }
             >
               A
@@ -101,7 +101,7 @@ function InterfacesPanel({
             <div
               id="key-up"
               className={
-                (assembleur.controllerInput & 8) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 8) !== 0 ? 'key-pressed' : ''
               }
             >
               W
@@ -109,7 +109,7 @@ function InterfacesPanel({
             <div
               id="key-right"
               className={
-                (assembleur.controllerInput & 4) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 4) !== 0 ? 'key-pressed' : ''
               }
             >
               D
@@ -117,7 +117,7 @@ function InterfacesPanel({
             <div
               id="key-down"
               className={
-                (assembleur.controllerInput & 2) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 2) !== 0 ? 'key-pressed' : ''
               }
             >
               S
@@ -125,7 +125,7 @@ function InterfacesPanel({
             <div
               id="key-tl"
               className={
-                (assembleur.controllerInput & 64) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 64) !== 0 ? 'key-pressed' : ''
               }
             >
               T
@@ -133,7 +133,7 @@ function InterfacesPanel({
             <div
               id="key-tr"
               className={
-                (assembleur.controllerInput & 128) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 128) !== 0 ? 'key-pressed' : ''
               }
             >
               Y
@@ -141,7 +141,7 @@ function InterfacesPanel({
             <div
               id="key-bl"
               className={
-                (assembleur.controllerInput & 16) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 16) !== 0 ? 'key-pressed' : ''
               }
             >
               J
@@ -149,7 +149,7 @@ function InterfacesPanel({
             <div
               id="key-br"
               className={
-                (assembleur.controllerInput & 32) !== 0 ? "key-pressed" : ""
+                (assembleur.controllerInput & 32) !== 0 ? 'key-pressed' : ''
               }
             >
               K

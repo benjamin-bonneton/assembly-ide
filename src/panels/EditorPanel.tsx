@@ -1,24 +1,43 @@
 // Providers
-import { useAssembleur } from "@providers/assembleur/useAssembleur";
+import { useAssembleur } from '@providers/assembleur/useAssembleur';
 
 // Components
-import Editor, { type EditorHandle } from "@components/Editor";
-import NavBar from "@components/NavBar";
-import { useEffect, useRef, useState } from "react";
+import Editor, { type EditorHandle } from '@components/Editor';
+import NavBar from '@components/NavBar';
+import { useEffect, useRef, useState } from 'react';
+
+// Hooks
+import useAssembleurEngine from '@hooks/useAssembleurEngine';
 
 // Styles
-import "@styles/Editor.css";
+import '@styles/Editor.css';
 
 // Icons
-import HideIcon from "@images/hide.svg";
+import HideIcon from '@images/hide.svg';
 
 function EditorPanel() {
   // Assembleur Provider
   const { assembleur, setAssembleur } = useAssembleur();
 
+  // Assembleur Engine
+  const { startProgram } = useAssembleurEngine();
+
   // Editor State
   const editorRef = useRef<EditorHandle | null>(null);
-  const [editorValue, setEditorValue] = useState("");
+  const [editorValue, setEditorValue] = useState('');
+
+  // Handlers for shortcuts
+  const handleExecute = () => {
+    startProgram(-1);
+  };
+
+  const handleStep = () => {
+    if (assembleur.stepLimit < 0) {
+      startProgram(1);
+    } else {
+      startProgram(assembleur.stepLimit + 1);
+    }
+  };
 
   // Sync editor value with assembleur code
   useEffect(() => {
@@ -47,6 +66,8 @@ function EditorPanel() {
           value={editorValue}
           setValue={setEditorValue}
           executionLine={assembleur.programCounter}
+          onExecute={handleExecute}
+          onStep={handleStep}
         />
       </div>
 

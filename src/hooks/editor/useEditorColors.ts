@@ -1,7 +1,7 @@
-import { useCallback } from "react";
-import { functions } from "../../types/functions";
-import { conditions } from "../../types/conditions";
-import { categories } from "../../types/categories";
+import { useCallback } from 'react';
+import { functions } from '../../types/functions';
+import { conditions } from '../../types/conditions';
+import { categories } from '../../types/categories';
 
 // Build keywords structure from functions and categories
 const buildKeywords = () => {
@@ -23,20 +23,28 @@ const buildKeywords = () => {
   // Populate keywords from functions
   Object.entries(functions).forEach(([functionName, functionData]) => {
     const category = functionData.category;
-    keywords[category].items.push(functionName);
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (keywords[category]) {
+      keywords[category].items.push(functionName);
+    }
   });
 
   // Populate keywords from conditions
   Object.entries(conditions).forEach(([conditionName, conditionData]) => {
     const category = conditionData.category;
-    keywords[category].items.push(conditionName);
+
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (category && keywords[category]) {
+      keywords[category].items.push(conditionName);
+    }
   });
 
   // Add register pattern to register category
-  keywords.register.items.push("r0");
+  keywords.register.items.push('r0');
 
   // Add comment syntax
-  keywords.comment.items.push("//", ";");
+  keywords.comment.items.push('//', ';');
 
   return keywords;
 };
@@ -49,12 +57,12 @@ function escapeHtml(text: string) {
     /[&<>"']/g,
     (c) =>
       ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;",
-      }[c] ?? "")
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[c] ?? ''
   );
 }
 
@@ -72,20 +80,20 @@ function colorize(text: string) {
 
   // Highlight all other keywords, but skip already highlighted comments
   Object.entries(keywords).forEach(([cat, { items, color }]) => {
-    if (cat === "comment" || !items.length) return;
+    if (cat === 'comment' || !items.length) return;
 
     // Build regex for keywords (special handling for registers)
     const regex = new RegExp(
       items
         .map((kw) => {
-          if (kw === "r0") {
-            return "\\br\\d+\\b";
+          if (kw === 'r0') {
+            return '\\br\\d+\\b';
           } else {
             return `\\b${kw}\\b`;
           }
         })
-        .join("|"),
-      "g"
+        .join('|'),
+      'g'
     );
 
     // Replace only outside of comment spans

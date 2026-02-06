@@ -1,10 +1,10 @@
 // Env
-import { MAX_DEPTH_CALL_STACK } from "../vite-env.d";
+import { MAX_DEPTH_CALL_STACK } from '../vite-env.d';
 
 // Utils
-import { getRegisterValue, setRegisterValue } from "./registers";
-import { getMemoryValue, setMemoryValue } from "./memory";
-import { isConditionValid } from "./customConditions";
+import { getRegisterValue, setRegisterValue } from './registers';
+import { getMemoryValue, setMemoryValue } from './memory';
+import { isConditionValid } from './customConditions';
 
 // Types
 import type {
@@ -16,9 +16,9 @@ import type {
   ScreenNumberType,
   ScreenPixelsType,
   ScreenTextType,
-} from "src/types/assembleur";
-import type { conditions } from "src/types/conditions";
-import type { functions } from "src/types/functions";
+} from 'src/types/assembleur';
+import type { conditions } from 'src/types/conditions';
+import type { functions } from 'src/types/functions';
 
 // Functions handlers
 export function functionHandler(
@@ -33,87 +33,108 @@ export function functionHandler(
 } {
   switch (functionName) {
     // Execution
-    case "NOP":
+    case 'NOP':
       return { newAssembleur, addressesStack, endProgram: false };
-    case "HLT":
+    case 'HLT':
       return { newAssembleur, addressesStack, endProgram: true };
     // Operations
-    case "ADD":
+    case 'ADD':
       newAssembleur.registers = ADD(
         args[0],
         args[1],
         args[2],
         newAssembleur.registers
       );
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
-    case "SUB":
+    case 'SUB':
       newAssembleur.registers = SUB(
         args[0],
         args[1],
         args[2],
         newAssembleur.registers
       );
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
-    case "NOR":
+    case 'NOR':
       newAssembleur.registers = NOR(
         args[0],
         args[1],
         args[2],
         newAssembleur.registers
       );
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
-    case "AND":
+    case 'AND':
       newAssembleur.registers = AND(
         args[0],
         args[1],
         args[2],
         newAssembleur.registers
       );
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
-    case "XOR":
+    case 'XOR':
       newAssembleur.registers = XOR(
         args[0],
         args[1],
         args[2],
         newAssembleur.registers
       );
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
-    case "RSH":
+    case 'RSH':
       newAssembleur.registers = RSH(args[0], args[1], newAssembleur.registers);
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
-    case "CMP":
+    case 'CMP':
       newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "MOV":
+    case 'MOV':
       newAssembleur.registers = MOV(args[0], args[1], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "LSH":
+    case 'LSH':
       newAssembleur.registers = LSH(args[0], args[1], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "INC":
+    case 'INC':
       newAssembleur.registers = INC(args[0], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "DEC":
+    case 'DEC':
       newAssembleur.registers = DEC(args[0], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "NOT":
+    case 'NOT':
       newAssembleur.registers = NOT(args[0], args[1], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "NEG":
+    case 'NEG':
       newAssembleur.registers = NEG(args[0], args[1], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
     // Memory
-    case "LDI":
+    case 'LDI':
       newAssembleur.registers = LDI(args[0], args[1], newAssembleur.registers);
       return { newAssembleur, addressesStack, endProgram: false };
-    case "ADI":
+    case 'ADI':
       newAssembleur.registers = ADI(args[0], args[1], newAssembleur.registers);
+
+      newAssembleur.flags = CMP(args[0], args[1], newAssembleur.registers);
+
       return { newAssembleur, addressesStack, endProgram: false };
     // Control
-    case "JMP":
+    case 'JMP':
       newAssembleur.programCounter = JMP(Number(args[0]));
       return { newAssembleur, addressesStack, endProgram: false };
-    case "BRH":
+    case 'BRH':
       newAssembleur.programCounter = BRH(
         args[0] as keyof typeof conditions,
         newAssembleur.flags,
@@ -121,7 +142,7 @@ export function functionHandler(
         Number(args[1])
       );
       return { newAssembleur, addressesStack, endProgram: false };
-    case "CAL": {
+    case 'CAL': {
       const result = CAL(
         addressesStack,
         newAssembleur.programCounter,
@@ -134,11 +155,11 @@ export function functionHandler(
         endProgram: false,
       };
     }
-    case "RET":
+    case 'RET':
       newAssembleur.programCounter = RET(addressesStack);
       return { newAssembleur, addressesStack, endProgram: false };
     // Storage
-    case "LOD": {
+    case 'LOD': {
       const result = LOD(
         args[0],
         args[1],
@@ -157,7 +178,7 @@ export function functionHandler(
       newAssembleur.randomCache = result.randomCache;
       return { newAssembleur, addressesStack, endProgram: false };
     }
-    case "STR": {
+    case 'STR': {
       const result = STR(
         args[0],
         args[1],
@@ -304,7 +325,7 @@ function CMP(
   rA: string,
   rB: string,
   registers: RegistersType
-): AssembleurType["flags"] {
+): AssembleurType['flags'] {
   // Get values
   const valA = getRegisterValue(rA, registers);
   const valB = getRegisterValue(rB, registers);
@@ -433,7 +454,7 @@ function JMP(nextAddress: number): number {
 
 function BRH(
   conditionName: keyof typeof conditions,
-  flags: AssembleurType["flags"],
+  flags: AssembleurType['flags'],
   currentAddress: number,
   calledAddress: number
 ): number {
@@ -470,7 +491,7 @@ function RET(addressesStack: AddressesStackType): number {
   const popped = addressesStack.pop();
 
   if (popped === undefined) {
-    throw new Error("Return stack underflow");
+    throw new Error('Return stack underflow');
   }
 
   return popped;
@@ -495,7 +516,7 @@ function LOD(
 
   // Validate and parse offset
   let offsetValue = 0;
-  if (offset !== null && offset !== "") {
+  if (offset !== null && offset !== '') {
     offsetValue = parseInt(offset, 10);
     if (isNaN(offsetValue)) {
       throw new Error(`Invalid offset: ${offset}`);
@@ -549,7 +570,7 @@ function LOD(
         value = randomCache.get(programCounter);
 
         if (value === undefined) {
-          throw new Error("Unexpected error retrieving random cache value");
+          throw new Error('Unexpected error retrieving random cache value');
         }
       } else {
         // Generate new random value and cache it
@@ -602,7 +623,7 @@ function STR(
 
   // Validate and parse offset
   let offsetValue = 0;
-  if (offset !== null && offset !== "") {
+  if (offset !== null && offset !== '') {
     offsetValue = parseInt(offset, 10);
     if (isNaN(offsetValue)) {
       throw new Error(`Invalid offset: ${offset}`);
@@ -798,7 +819,7 @@ function updateScreenTextBuffer(
   // Convert value to character
   const char = getCharacter(value);
 
-  const emptyIndex = screenTextBuffer.indexOf("");
+  const emptyIndex = screenTextBuffer.indexOf('');
 
   // If buffer is not full, append character
   if (emptyIndex !== -1) {
@@ -816,12 +837,12 @@ function updateScreenTextBuffer(
 }
 
 function clearScreenTextBuffer(): ScreenTextType {
-  return ["", "", "", "", "", "", "", "", "", ""];
+  return ['', '', '', '', '', '', '', '', '', ''];
 }
 
 function getCharacter(value: number): string {
   if (value === 0) {
-    return " ";
+    return ' ';
   }
 
   if (value >= 1 && value <= 26) {
@@ -829,13 +850,13 @@ function getCharacter(value: number): string {
   }
 
   if (value === 27) {
-    return ".";
+    return '.';
   }
   if (value === 28) {
-    return "!";
+    return '!';
   }
   if (value === 29) {
-    return "?";
+    return '?';
   }
 
   throw new Error(

@@ -3,23 +3,23 @@ import {
   NB_REGISTERS,
   NB_DATA_MEMORY,
   NB_INSTRUCTION_MEMORY,
-} from "../vite-env.d";
+} from '../vite-env.d';
 
 // React
-import { useRef } from "react";
+import { useRef } from 'react';
 
 // Provider
-import { useAssembleur } from "@providers/assembleur/useAssembleur";
+import { useAssembleur } from '@providers/assembleur/useAssembleur';
 
 // Hook
-import useRaiseError from "./useRaiseError";
+import useRaiseError from './useRaiseError';
 
 // Utils
-import { extractLabelsAndAliases, parseCode } from "@utils/assembleur";
-import { isLabel } from "@utils/labels";
-import { getInstructionFunction } from "@utils/instructions";
-import { isValidFunctionName, resolveFunctionSyntax } from "@utils/functions";
-import { resolveAlias } from "@utils/aliases";
+import { extractLabelsAndAliases, parseCode } from '@utils/assembleur';
+import { isLabel } from '@utils/labels';
+import { getInstructionFunction } from '@utils/instructions';
+import { isValidFunctionName, resolveFunctionSyntax } from '@utils/functions';
+import { resolveAlias } from '@utils/aliases';
 
 // Types
 import type {
@@ -28,8 +28,8 @@ import type {
   AssembleurType,
   InstructionsType,
   LabelsType,
-} from "src/types/assembleur";
-import { functionHandler } from "@utils/customFunctions";
+} from 'src/types/assembleur';
+import { functionHandler } from '@utils/customFunctions';
 
 const useAssembleurEngine = () => {
   const { assembleur, setAssembleur } = useAssembleur();
@@ -49,7 +49,7 @@ const useAssembleurEngine = () => {
     // Validate instruction count
     if (instructions.length > NB_INSTRUCTION_MEMORY) {
       raiseError(
-        "SYNTAX_ERROR",
+        'SYNTAX_ERROR',
         `Program too large: ${String(
           instructions.length
         )} instructions (maximum: ${String(NB_INSTRUCTION_MEMORY)})`
@@ -100,8 +100,8 @@ const useAssembleurEngine = () => {
       memories: Array.from({ length: NB_DATA_MEMORY }, () => 0),
       screenNumber: 0,
       screenNumberIsSigned: true,
-      screenTextBuffer: Array.from({ length: 10 }, () => ""),
-      screenText: Array.from({ length: 10 }, () => ""),
+      screenTextBuffer: Array.from({ length: 10 }, () => ''),
+      screenText: Array.from({ length: 10 }, () => ''),
       screenPixelX: 0,
       screenPixelY: 0,
       screenPixelsBuffer: Array.from({ length: 1024 }, () => false),
@@ -199,7 +199,7 @@ const useAssembleurEngine = () => {
 
     // Check program end
     if (currentAddress >= instructions.length) {
-      raiseError("RUNTIME_ERROR", "Program counter out of bounds");
+      raiseError('RUNTIME_ERROR', 'Program counter out of bounds');
     }
 
     // Get current instruction
@@ -243,7 +243,7 @@ const useAssembleurEngine = () => {
       );
     } catch (error) {
       raiseError(
-        "RUNTIME_ERROR",
+        'RUNTIME_ERROR',
         error instanceof Error ? error.message : String(error)
       );
       throw error;
@@ -294,21 +294,21 @@ const useAssembleurEngine = () => {
       // Check function name
       if (!isValidFunctionName(functionName)) {
         raiseError(
-          "SYNTAX_ERROR",
-          "Unknow function " + functionName,
+          'SYNTAX_ERROR',
+          'Unknow function ' + functionName,
           index + 1
         );
       }
 
       // Check aliases cycles
-      if (functionName === "DEFINE") {
+      if (functionName === 'DEFINE') {
         const aliasName = inst[1];
         try {
           resolveAlias(aliasName, aliases);
           return;
         } catch (error) {
           raiseError(
-            "SYNTAX_ERROR",
+            'SYNTAX_ERROR',
             error instanceof Error ? error.message : String(error),
             index + 1
           );
@@ -347,7 +347,7 @@ const useAssembleurEngine = () => {
 
       // Check program end
       if (currentAddress >= instructions.length) {
-        raiseError("RUNTIME_ERROR", "Program counter out of bounds");
+        raiseError('RUNTIME_ERROR', 'Program counter out of bounds');
         break;
       }
 
@@ -384,7 +384,7 @@ const useAssembleurEngine = () => {
         );
       } catch (error) {
         raiseError(
-          "RUNTIME_ERROR",
+          'RUNTIME_ERROR',
           error instanceof Error ? error.message : String(error)
         );
         break;

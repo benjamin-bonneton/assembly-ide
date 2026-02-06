@@ -1,21 +1,21 @@
 // Env
-import { NB_DATA_MEMORY, START_RESERVED_MEMORY } from "../vite-env.d";
+import { NB_DATA_MEMORY, START_RESERVED_MEMORY } from '../vite-env.d';
 
 // React
-import React from "react";
+import React from 'react';
 
 // Providers
-import { useAssembleur } from "@providers/assembleur/useAssembleur";
+import { useAssembleur } from '@providers/assembleur/useAssembleur';
 
 // Hooks
-import useAssembleurEngine from "@hooks/useAssembleurEngine";
+import useAssembleurEngine from '@hooks/useAssembleurEngine';
 
 // Styles
-import "@styles/ActionsAndDataPanel.css";
+import '@styles/ActionsAndDataPanel.css';
 
 // Icons
-import collapseIcon from "@images/collapse.svg";
-import expandIcon from "@images/expand.svg";
+import collapseIcon from '@images/collapse.svg';
+import expandIcon from '@images/expand.svg';
 
 function ActionsAndDataPanel({
   isVisible,
@@ -69,7 +69,7 @@ function ActionsAndDataPanel({
         <div id="program_counter" className="card center">
           <div className="content">
             <p>
-              Program Counter :{" "}
+              Program Counter :{' '}
               <span className="filled">{assembleur.programCounter}</span>
             </p>
           </div>
@@ -172,14 +172,14 @@ function ActionsAndDataPanel({
               <div className="item">
                 <span className="label">Carry:</span>
                 <span id="flag-carry-value" className="state">
-                  {assembleur.flags.carry ? "True" : "False"}
+                  {assembleur.flags.carry ? 'True' : 'False'}
                 </span>
               </div>
               <p className="divider">|</p>
               <div className="item">
                 <span className="label">Zero:</span>
                 <span id="flag-zero-value" className="state">
-                  {assembleur.flags.zero ? "True" : "False"}
+                  {assembleur.flags.zero ? 'True' : 'False'}
                 </span>
               </div>
             </div>
@@ -206,13 +206,13 @@ function ActionsAndDataPanel({
                             style={{
                               color:
                                 assembleur.registers[regIdx] !== 0
-                                  ? "var(--color-primary)"
+                                  ? 'var(--color-primary)'
                                   : undefined,
                             }}
                           >
                             {assembleur.registers[regIdx]
                               .toString()
-                              .padStart(3, "0")}
+                              .padStart(3, '0')}
                           </td>
                         </React.Fragment>
                       );
@@ -239,18 +239,18 @@ function ActionsAndDataPanel({
                       if (regIdx >= assembleur.memories.length) return null;
                       return (
                         <React.Fragment key={regIdx}>
-                          <th>{regIdx.toString().padStart(3, "0")}:</th>
+                          <th>{regIdx.toString().padStart(3, '0')}:</th>
                           <td
                             style={{
                               color:
                                 assembleur.memories[regIdx] !== 0
-                                  ? "var(--color-primary)"
+                                  ? 'var(--color-primary)'
                                   : undefined,
                             }}
                           >
                             {assembleur.memories[regIdx]
                               .toString()
-                              .padStart(3, "0")}
+                              .padStart(3, '0')}
                           </td>
                         </React.Fragment>
                       );
@@ -259,7 +259,10 @@ function ActionsAndDataPanel({
                 ))}
               </tbody>
             </table>
-            <p>{START_RESERVED_MEMORY}-{NB_DATA_MEMORY - 1} Reserved for I/O Ports</p>
+            <p>
+              {START_RESERVED_MEMORY}-{NB_DATA_MEMORY - 1} Reserved for I/O
+              Ports
+            </p>
           </div>
         </div>
       </div>

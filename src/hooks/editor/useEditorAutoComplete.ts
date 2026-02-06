@@ -1,8 +1,8 @@
-import { useState, useEffect, type RefObject } from "react";
-import { functions } from "../../types/functions";
-import type { FunctionType } from "../../types/functions";
-import { conditions } from "../../types/conditions";
-import type { ConditionType } from "../../types/conditions";
+import { useState, useEffect, useRef, type RefObject } from 'react';
+import { functions } from '../../types/functions';
+import type { FunctionType } from '../../types/functions';
+import { conditions } from '../../types/conditions';
+import type { ConditionType } from '../../types/conditions';
 
 const REGISTERS = Array.from({ length: 16 }, (_, i) => `r${String(i)}`);
 const DEFAULT_KEYWORDS = [
@@ -22,14 +22,13 @@ interface AutoCompleteState {
 
 interface UseEditorAutoCompleteReturn {
   autoComplete: AutoCompleteState;
+  dropdownRef: RefObject<HTMLDivElement | null>;
   showAutoComplete: (textarea: HTMLTextAreaElement) => void;
   hideAutoComplete: () => void;
   selectNext: () => void;
   selectPrevious: () => void;
   setSelectedIndex: (index: number) => void;
-  confirmSelection: (
-    textarea: HTMLTextAreaElement
-  ) => {
+  confirmSelection: (textarea: HTMLTextAreaElement) => {
     newValue: string;
     newCursorStart: number;
     newCursorEnd: number;
@@ -41,6 +40,7 @@ function useEditorAutoComplete(
   textareaRef: RefObject<HTMLTextAreaElement | null>,
   keywords: string[] = DEFAULT_KEYWORDS
 ): UseEditorAutoCompleteReturn {
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const [autoComplete, setAutoComplete] = useState<AutoCompleteState>({
     isVisible: false,
     suggestions: [],
@@ -71,12 +71,13 @@ function useEditorAutoComplete(
 
   // Get cursor position in pixels
   const getCursorCoordinates = (
-    textarea: HTMLTextAreaElement
+    textarea: HTMLTextAreaElement,
+    suggestionCount = 0
   ): { top: number; left: number } => {
     // Simple approach: calculate based on line height and character position
     const { value, selectionStart } = textarea;
     const textBeforeCursor = value.substring(0, selectionStart);
-    const lines = textBeforeCursor.split("\n");
+    const lines = textBeforeCursor.split('\n');
     const currentLineNumber = lines.length - 1;
     const currentLineText = lines[currentLineNumber];
 
@@ -84,12 +85,37 @@ function useEditorAutoComplete(
     const computed = window.getComputedStyle(textarea);
     const lineHeight = parseInt(computed.lineHeight) || 20;
     const fontSize = parseInt(computed.fontSize) || 16;
+    const paddingLeft = parseInt(computed.paddingLeft) || 0;
     const charWidth = fontSize * 0.6;
 
-    return {
-      top: (currentLineNumber + 1) * lineHeight + 10,
-      left: currentLineText.length * charWidth + 10,
-    };
+    // Calculate base position and adjust for scroll
+    const cursorTopAbsolute = (currentLineNumber + 1) * lineHeight;
+    const cursorTopRelative = cursorTopAbsolute - textarea.scrollTop;
+    const lineTopRelative = cursorTopRelative - lineHeight; // top of current line
+    const left =
+      paddingLeft + currentLineText.length * charWidth - textarea.scrollLeft;
+
+    // Calculate actual menu height based on number of items
+    const itemHeight = 75.4; // height of each menu item
+    const maxHeight = 300; // max-height from CSS
+    const actualMenuHeight = Math.min(suggestionCount * itemHeight, maxHeight);
+    const textareaHeight = textarea.clientHeight;
+
+    // Check if there's enough space below the cursor
+    const spaceBelow = textareaHeight - cursorTopRelative;
+    const shouldShowAbove =
+      spaceBelow < actualMenuHeight && lineTopRelative > actualMenuHeight;
+
+    let top: number;
+    if (shouldShowAbove) {
+      // Position above: align bottom of menu with top of current line
+      top = lineTopRelative - actualMenuHeight;
+    } else {
+      // Position below the current line (default)
+      top = cursorTopRelative + 10;
+    }
+
+    return { top, left };
   };
 
   // Update suggestions based on current word
@@ -120,7 +146,7 @@ function useEditorAutoComplete(
       const cond: ConditionType | undefined = (
         conditions as Record<string, ConditionType | undefined>
       )[keyword];
-      return func?.description ?? cond?.description ?? "";
+      return func?.description ?? cond?.description ?? '';
     });
 
     // Get usage information for filtered suggestions
@@ -131,7 +157,7 @@ function useEditorAutoComplete(
       return func?.usage ?? keyword;
     });
 
-    const position = getCursorCoordinates(textarea);
+    const position = getCursorCoordinates(textarea, filtered.length);
 
     setAutoComplete({
       isVisible: true,
@@ -203,7 +229,7 @@ function useEditorAutoComplete(
     const after = textarea.value.substring(end);
 
     const needsSpace = after.length === 0 || !/^[ \t]/.test(after);
-    const insertion = selectedSuggestion + (needsSpace ? " " : "");
+    const insertion = selectedSuggestion + (needsSpace ? ' ' : '');
     const newValue = before + insertion + after;
 
     const newCursorStart = before.length + insertion.length;
@@ -214,6 +240,24 @@ function useEditorAutoComplete(
     return { newValue, newCursorStart, newCursorEnd };
   };
 
+  // Scroll dropdown to keep selected item visible
+  useEffect(() => {
+    const dropdown = dropdownRef.current;
+    if (!dropdown || !autoComplete.isVisible) return;
+
+    // Find the selected item using data-index attribute
+    const selectedItem = dropdown.querySelector(
+      `[data-index="${String(autoComplete.selectedIndex)}"]`
+    );
+
+    if (selectedItem) {
+      selectedItem.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [autoComplete.selectedIndex, autoComplete.isVisible]);
+
   // Update suggestions when textarea changes
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -221,19 +265,23 @@ function useEditorAutoComplete(
 
     const handleScroll = () => {
       if (autoComplete.isVisible) {
-        const position = getCursorCoordinates(textarea);
+        const position = getCursorCoordinates(
+          textarea,
+          autoComplete.suggestions.length
+        );
         setAutoComplete((prev) => ({ ...prev, position }));
       }
     };
 
-    textarea.addEventListener("scroll", handleScroll);
+    textarea.addEventListener('scroll', handleScroll);
     return () => {
-      textarea.removeEventListener("scroll", handleScroll);
+      textarea.removeEventListener('scroll', handleScroll);
     };
-  }, [autoComplete.isVisible, textareaRef]);
+  }, [autoComplete.isVisible, autoComplete.suggestions.length, textareaRef]);
 
   return {
     autoComplete,
+    dropdownRef,
     showAutoComplete,
     hideAutoComplete,
     selectNext,

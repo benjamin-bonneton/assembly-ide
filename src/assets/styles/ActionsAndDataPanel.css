@@ -184,7 +184,7 @@
   text-align: center;
   box-sizing: border-box;
 }
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 

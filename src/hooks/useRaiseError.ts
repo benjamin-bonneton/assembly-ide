@@ -1,8 +1,8 @@
 // Providers
-import { useAssembleur } from "@providers/assembleur/useAssembleur";
+import { useAssembleur } from '@providers/assembleur/useAssembleur';
 
 // Types
-import { ErrorType } from "../types/errors";
+import { ErrorType } from '../types/errors';
 
 function useRaiseError() {
   // Get assembleur context at the hook level
@@ -16,7 +16,7 @@ function useRaiseError() {
   ): never {
     // Construct error message
     const errorMessage = `${ErrorType[errorKey]}${
-      line ? ` at line ${String(line)}` : ""
+      line ? ` at line ${String(line)}` : ''
     }: ${message}`;
 
     // Update assembleur state with error

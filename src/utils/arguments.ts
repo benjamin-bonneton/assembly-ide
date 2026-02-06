@@ -1,45 +1,45 @@
 // Env
-import { NB_REGISTERS } from "../vite-env.d";
+import { NB_REGISTERS } from '../vite-env.d';
 
 // Utils
-import { isLabel } from "./labels";
-import { isRegister } from "./registers";
+import { isLabel } from './labels';
+import { isRegister } from './registers';
 
 // Types
-import { conditions } from "../types/conditions";
+import { conditions } from '../types/conditions';
 import {
   type AliasesType,
   type ArgumentType,
   type LabelsType,
-} from "../types/assembleur";
+} from '../types/assembleur';
 
 export const getArgumentType = (arg: string): ArgumentType => {
   // Check if argument is a label
   if (isLabel(arg)) {
-    return "label";
+    return 'label';
   }
 
   // Check if argument is a register
   if (isRegister(arg)) {
-    return "register";
+    return 'register';
   }
 
   // Check if argument is a condition
   if (Object.keys(conditions).includes(arg)) {
-    return "condition";
+    return 'condition';
   }
 
   // Check if argument is a defined alias (start with a letter or _)
   if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(arg)) {
-    return "alias";
+    return 'alias';
   }
 
   // Check if argument is an immediate value
   if (!isNaN(parseInt(arg, 10))) {
-    return "immediate";
+    return 'immediate';
   }
 
-  return "unknown";
+  return 'unknown';
 };
 
 export const checkArgumentExistence = (
@@ -49,20 +49,20 @@ export const checkArgumentExistence = (
   aliases: AliasesType
 ) => {
   switch (type) {
-    case "label":
+    case 'label':
       return arg in labels;
-    case "register":
+    case 'register':
       return Array.from(
         { length: NB_REGISTERS },
         (_, i) => `r${String(i)}`
       ).includes(arg);
-    case "condition":
+    case 'condition':
       return arg in conditions;
-    case "alias":
+    case 'alias':
       return arg in aliases;
-    case "immediate":
+    case 'immediate':
       return true;
-    case "unknown":
+    case 'unknown':
     default:
       return false;
   }

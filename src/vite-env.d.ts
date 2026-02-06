@@ -10,4 +10,4 @@ export const MAX_DEPTH_CALL_STACK: number =
 export const START_RESERVED_MEMORY: number =
   (import.meta.env.VITE_START_RESERVED_MEMORY as number) || 240;
 export const VERSION: string =
-  (import.meta.env.VITE_VERSION as string) || "Unknown";
+  (import.meta.env.VITE_VERSION as string) || 'Unknown';

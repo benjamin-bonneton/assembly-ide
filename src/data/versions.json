@@ -1,0 +1,25 @@
+[
+  {
+    "version": "26.2.0",
+    "date": "February 3, 2026",
+    "notes": {
+      "features": [
+        "Autocomplete menu: Keep focus on selected item using navigation arrows",
+        "Autocomplete menu: Positioned according to available space and number of items to display",
+        "Keyboard shortcuts: Save file, open file, close tab, run program, step to next execution stage",
+        "Shortcuts help window: Complete details of all available shortcuts",
+        "Instructions help window: Complete details on usage and purpose of available instructions"
+      ],
+      "changes": [
+        "Empty lines and comment-only lines are no longer considered in program execution",
+        "File save names now include a unique code by default to differentiate from previously saved versions",
+        "Instructions ADD, SUB, NOR, AND, XOR, RSH, and ADI now automatically set flags after each execution"
+      ],
+      "bugFixes": [
+        "Fixed misalignment between line numbers and editor content",
+        "Fixed misalignment between editor content and cursor position",
+        "Fixed autocomplete menu disappearing as program lines increased"
+      ]
+    }
+  }
+]

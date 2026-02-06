@@ -1,14 +1,14 @@
 // Hooks
-import useLayout from "@hooks/useLayout";
-import useGamepadController from "@hooks/useGamepadController";
+import useLayout from '@hooks/useLayout';
+import useGamepadController from '@hooks/useGamepadController';
 
 // Components
-import EditorPanel from "@panels/EditorPanel";
-import InterfacesPanel from "@panels/InterfacesPanel";
-import ActionsAndDataPanel from "@panels/ActionsAndDataPanel";
+import EditorPanel from '@panels/EditorPanel';
+import InterfacesPanel from '@panels/InterfacesPanel';
+import ActionsAndDataPanel from '@panels/ActionsAndDataPanel';
 
 // Styles
-import "@styles/main.css";
+import '@styles/main.css';
 
 function App() {
   // Layout Hook

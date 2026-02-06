@@ -1,8 +1,8 @@
 // Utils
-import { getArgumentType } from "@utils/arguments";
+import { getArgumentType } from '@utils/arguments';
 
 // Types
-import type { AliasesType } from "src/types/assembleur";
+import type { AliasesType } from 'src/types/assembleur';
 
 export const resolveAlias = (arg: string, aliases: AliasesType) => {
   const visited = new Set<string>();
@@ -10,7 +10,7 @@ export const resolveAlias = (arg: string, aliases: AliasesType) => {
 
   // Resolve aliases until a base type is found
   while (
-    !["register", "immediate", "condition"].includes(
+    !['register', 'immediate', 'condition'].includes(
       getArgumentType(currentValue)
     ) &&
     !visited.has(currentValue)
@@ -28,7 +28,7 @@ export const resolveAlias = (arg: string, aliases: AliasesType) => {
 
   // If resolved to a valid type, return it
   if (
-    ["register", "immediate", "condition"].includes(
+    ['register', 'immediate', 'condition'].includes(
       getArgumentType(currentValue)
     )
   ) {

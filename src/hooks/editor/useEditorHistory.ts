@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback } from 'react';
 
 interface HistoryEntry {
   value: string;
@@ -10,7 +10,7 @@ function useEditorHistory(
   textareaRef: React.RefObject<HTMLTextAreaElement | null>
 ) {
   const historyRef = useRef<HistoryEntry[]>([
-    { value: "", selection: { start: 0, end: 0 } },
+    { value: '', selection: { start: 0, end: 0 } },
   ]);
   const historyIndexRef = useRef(0);
 

@@ -1,15 +1,15 @@
 // Utils
-import { getArgumentType } from "./arguments";
-import { resolveAlias } from "./aliases";
+import { getArgumentType } from './arguments';
+import { resolveAlias } from './aliases';
 
 // Types
-import { functions } from "../types/functions";
+import { functions } from '../types/functions';
 import type {
   AliasesType,
   InstructionType,
   LabelsType,
-} from "src/types/assembleur";
-import type { ErrorType } from "src/types/errors";
+} from 'src/types/assembleur';
+import type { ErrorType } from 'src/types/errors';
 
 export const isValidFunctionName = (functionName: string) => {
   return functionName in functions;
@@ -33,7 +33,7 @@ export const resolveFunctionSyntax = (
     functions[functionName].args.length !== args.length
   ) {
     raiseError(
-      "SYNTAX_ERROR",
+      'SYNTAX_ERROR',
       `Function ${functionName} expects ${String(
         functions[functionName].args.length
       )} arguments, got ${String(args.length)}`,
@@ -49,7 +49,7 @@ export const resolveFunctionSyntax = (
 
     if (providedArgsLength > expectedArgsLength) {
       raiseError(
-        "SYNTAX_ERROR",
+        'SYNTAX_ERROR',
         `Function ${functionName} expects at most ${String(
           expectedArgsLength
         )} options, got ${String(providedArgsLength)}`,
@@ -66,13 +66,13 @@ export const resolveFunctionSyntax = (
     let resolvedArg: string | undefined = undefined;
 
     // If provided type is an alias, get its resolved type
-    if (providedType === "alias" && functionName !== "DEFINE") {
+    if (providedType === 'alias' && functionName !== 'DEFINE') {
       try {
         resolvedArg = resolveAlias(args[i], aliases);
         providedType = getArgumentType(resolvedArg);
       } catch (error) {
         raiseError(
-          "SYNTAX_ERROR",
+          'SYNTAX_ERROR',
           error instanceof Error ? error.message : String(error),
           index
         );
@@ -82,11 +82,11 @@ export const resolveFunctionSyntax = (
     // Validate argument type
     if (!expectedTypes.includes(providedType)) {
       raiseError(
-        "SYNTAX_ERROR",
+        'SYNTAX_ERROR',
         `Invalid type for argument ${String(
           i + 1
         )} in function ${functionName}: expected ${expectedTypes.join(
-          " or "
+          ' or '
         )}, got ${providedType}`,
         index
       );
@@ -98,12 +98,12 @@ export const resolveFunctionSyntax = (
     }
 
     // Replace label with its address
-    if (providedType === "label") {
+    if (providedType === 'label') {
       if (Object.keys(labels).includes(args[i])) {
         args[i] = labels[args[i]].toString();
       } else {
         raiseError(
-          "SYNTAX_ERROR",
+          'SYNTAX_ERROR',
           `Undefined label ${args[i]} in function ${functionName}`,
           index
         );
@@ -126,7 +126,7 @@ export const resolveFunctionSyntax = (
     let resolvedArg: string | undefined = undefined;
 
     // If provided type is an alias, get its resolved type
-    if (providedType === "alias" && functionName !== "DEFINE") {
+    if (providedType === 'alias' && functionName !== 'DEFINE') {
       try {
         resolvedArg = resolveAlias(
           args[functions[functionName].args.length + i],
@@ -135,7 +135,7 @@ export const resolveFunctionSyntax = (
         providedType = getArgumentType(resolvedArg);
       } catch (error) {
         raiseError(
-          "SYNTAX_ERROR",
+          'SYNTAX_ERROR',
           error instanceof Error ? error.message : String(error),
           index
         );
@@ -145,11 +145,11 @@ export const resolveFunctionSyntax = (
     // Validate option type
     if (!expectedTypes.includes(providedType)) {
       raiseError(
-        "SYNTAX_ERROR",
+        'SYNTAX_ERROR',
         `Invalid type for option ${String(
           i + 1
         )} in function ${functionName}: expected ${expectedTypes.join(
-          " or "
+          ' or '
         )}, got ${providedType}`,
         index
       );
@@ -161,7 +161,7 @@ export const resolveFunctionSyntax = (
     }
 
     // Replace label with its address
-    if (providedType === "label") {
+    if (providedType === 'label') {
       if (
         Object.keys(labels).includes(
           args[functions[functionName].args.length + i]
@@ -171,7 +171,7 @@ export const resolveFunctionSyntax = (
           labels[args[functions[functionName].args.length + i]].toString();
       } else {
         raiseError(
-          "SYNTAX_ERROR",
+          'SYNTAX_ERROR',
           `Undefined label ${
             args[functions[functionName].args.length + i]
           } in function ${functionName}`,
